@@ -110,7 +110,7 @@ void bellman_ford(int n) {
 }
 
 int main(int argc, char *argv[]){
-
+    //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
     //indicamos los archivos de texto tanto de salido como de entrada. 
     freopen(argv[1], "r" , stdin);
     freopen(argv[2], "w" , stdout); 
@@ -137,16 +137,16 @@ int main(int argc, char *argv[]){
         return 0;
     } 
     
-    //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
     auto start = high_resolution_clock::now();
     // Ejecutamos el algoritmo de bellmand-ford
     bellman_ford(nodo);
     //tomamos el tiempo en que termina el algoritmo 
     auto stop = high_resolution_clock::now();
-    
-    //tomamos la diferencia como tiempo de runtime 
     auto duration = duration_cast<microseconds>(stop - start);
+
+    //tomamos la diferencia como tiempo de runtime 
     // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
+    
 
     cout << "*** TABLA DE ENRUTAMIENTO DEL NODO " << nodo << " ***" << endl; 
     cout << "----------------------" << endl;
@@ -162,6 +162,6 @@ int main(int argc, char *argv[]){
          << "|" << endl;
     }
     cout << "----------------------" << endl;
-    cout << "RUNTIME: " << duration.count() << "ms" << endl; 
+    cout << "RUNTIME: " << duration.count() << " microsegundos" << endl; 
     return 0;
 }
