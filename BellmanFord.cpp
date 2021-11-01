@@ -23,6 +23,7 @@
 #include<bits/stdc++.h>
 //Declaramos el entorno en el que vamos a usar, en este caso el estandar
 using namespace std;
+using namespace std::chrono;
 // Algunas simplificaciones de algunas estructuras que usaremos recurrentemente 
 // son simplificaciones de sintaxis mas que todo 
 typedef pair<int, int> pii;
@@ -135,12 +136,16 @@ int main(int argc, char *argv[]){
         cout << "NO EXISTE NÚMERO DE NODO " << endl;
         return 0;
     } 
-    auto start = high_resolution_clock::now();
     
+    //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
+    auto start = high_resolution_clock::now();
     // Ejecutamos el algoritmo de bellmand-ford
     bellman_ford(nodo);
-    
+    //tomamos el tiempo en que termina el algoritmo 
     auto stop = high_resolution_clock::now();
+    
+    //tomamos la diferencia como tiempo de runtime 
+    auto duration = duration_cast<microseconds>(stop - start);
     // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
 
     cout << "*** TABLA DE ENRUTAMIENTO DEL NODO " << nodo << " ***" << endl; 
@@ -157,5 +162,6 @@ int main(int argc, char *argv[]){
          << "|" << endl;
     }
     cout << "----------------------" << endl;
+    cout << "RUNTIME: " << duration.count() << "ms" << endl; 
     return 0;
 }
