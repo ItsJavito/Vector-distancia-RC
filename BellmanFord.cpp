@@ -112,6 +112,13 @@ void bellman_ford(int n) {
 int main(int argc, char *argv[]){
     //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
     //indicamos los archivos de texto tanto de salido como de entrada. 
+    
+    // validacion de argumentos 
+    if(argc < 4){
+        cout << "NO HAY SUFICIENTES ARGUMENTOS" << endl;
+        return 0; 
+    }
+
     freopen(argv[1], "r" , stdin);
     freopen(argv[2], "w" , stdout); 
 
