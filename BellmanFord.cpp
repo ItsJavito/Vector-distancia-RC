@@ -135,10 +135,12 @@ int main(int argc, char *argv[]){
         cout << "NO EXISTE NÚMERO DE NODO " << endl;
         return 0;
     } 
-
+    auto start = high_resolution_clock::now();
+    
     // Ejecutamos el algoritmo de bellmand-ford
     bellman_ford(nodo);
-
+    
+    auto stop = high_resolution_clock::now();
     // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
 
     cout << "*** TABLA DE ENRUTAMIENTO DEL NODO " << nodo << " ***" << endl; 
