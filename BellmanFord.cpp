@@ -1,11 +1,11 @@
 /*
  * Para correr el archivo se tiene que seguir los siguientes pasos:
  *
- * 1. Compilar con la sentencia "g++ ./BellmanFord.cpp -o BellmanFord"
+ * 1. Compilar con la sentencia "g++ -O3 ./BellmanFord.cpp -o BellmanFord"
  *    dara un ejecutable de nombre BellmanFord.exe.
  * 
  * 2. Ejecutar el .exe con 
- *    ./BellmanFord <ArchivoGrafo.txt> <nombreArchivoOutput> <Nodo> 
+ *    ./BellmanFord -O3 <ArchivoGrafo.txt> <nombreArchivoOutput> <Nodo> 
  * 
  * 3. Al ejecutar ese comando nos dara el archivo con la tabla de enrutamiento 
  *    al nodo que le indicamos. 
@@ -16,26 +16,57 @@
  * 
  *    - Se está ejecutando con el archivo de "Topologia1.txt"
  *    - La tabla de enrutamiento se esta mandando a "Output.txt"
- *    - Se esta buscando la tabla del nodo 2
+ *    - tabla de enrutamiento del nodo 2
  */
 
 //importacion de la libreria bits/stdc++.h que cotiene la mayoria de librerias utiles
 #include<bits/stdc++.h>
+#include <windows.h>
 //Declaramos el entorno en el que vamos a usar, en este caso el estandar
 using namespace std;
-using namespace std::chrono;
 // Algunas simplificaciones de algunas estructuras que usaremos recurrentemente 
 // son simplificaciones de sintaxis mas que todo 
 typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<pii> vpii;
 
-//Declaracion de N como un numero bastante grande, mas que todo para el algoritmo de bellman-ford
-//Lo ponemos como const por que es una constante en todo el programa 
-const int N = 3e5;
+
+/*
+    **Código para obtener el tiempo de runtime***
+
+    la libreria de std::chrono::high_resolution_clock no está 
+    bien implementada en windows, solamente en linux 
+    es por ello que daba respuestas como 0 de runtime 
+    para ello utilizamos otras funciones de la librería
+    windows.h para obtener el tiempo de respuesta 
+    extraido de 
+    https://stackoverflow.com/questions/1739259/how-to-use-queryperformancecounter
+*/
+
+double PCFreq = 0.0;
+__int64 CounterStart = 0;
+
+void StartCounter()
+{
+    LARGE_INTEGER li;
+    if(!QueryPerformanceFrequency(&li))
+    cout << "QueryPerformanceFrequency failed!\n";
+
+    PCFreq = double(li.QuadPart)/1000.0;
+
+    QueryPerformanceCounter(&li);
+    CounterStart = li.QuadPart;
+}
+double GetCounter()
+{
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    return double(li.QuadPart-CounterStart)/PCFreq;
+}
 
 // Funcion para poner alinear al centro un string, dando como parametro
 // el string y el tamaño que hay para poner el string
+
 string center(const string s, const int w) {
     stringstream ss, spaces;
     int padding = w - s.size();                 
@@ -46,6 +77,13 @@ string center(const string s, const int w) {
         ss << " ";
     return ss.str();
 }
+
+// ----------------- DECLARACION DE VARIABLES Y ALGORITMO --------------
+
+//Declaracion de N como un numero bastante grande, mas que todo para el algoritmo de bellman-ford
+//Lo ponemos como const por que es una constante en todo el programa 
+const int N = 3e5;
+
 
 // Declaracion de los vectores que almacenaran la distancia y las vias 
 vi dist(N, 3e5);
@@ -79,6 +117,7 @@ int get_via(int n, int u)
 //La complejidad de este algorimo es O(VE)
 // donde V son los vertices y E son las aristas
 void bellman_ford(int n) {
+    
     //Declaramos la distancia hacia el mismo nodo como 0
     dist[n] = 0;
     //la via a traves como se llega a n es n 
@@ -112,7 +151,7 @@ void bellman_ford(int n) {
 int main(int argc, char *argv[]){
     //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
     //indicamos los archivos de texto tanto de salido como de entrada. 
-    
+
     // validacion de argumentos 
     if(argc < 4){
         cout << "NO HAY SUFICIENTES ARGUMENTOS" << endl;
@@ -142,14 +181,14 @@ int main(int argc, char *argv[]){
     if(nodo >= CantNodos || nodo < 0){
         cout << "NO EXISTE NÚMERO DE NODO " << endl;
         return 0;
-    } 
-    
-    auto start = high_resolution_clock::now();
+    }
+
+    //Comenzamos a tomar el tiempo del algoritmo 
+    StartCounter();
     // Ejecutamos el algoritmo de bellmand-ford
-    bellman_ford(nodo);
+    bellman_ford(nodo); 
     //tomamos el tiempo en que termina el algoritmo 
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
+    double time = GetCounter();
 
     //tomamos la diferencia como tiempo de runtime 
     // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
@@ -169,6 +208,7 @@ int main(int argc, char *argv[]){
          << "|" << endl;
     }
     cout << "----------------------" << endl;
-    cout << "RUNTIME: " << duration.count() << " microsegundos" << endl; 
+    cout << "RUNTIME: " << setprecision(15) << 
+    time*100 << " ms" << endl; 
     return 0;
 }
