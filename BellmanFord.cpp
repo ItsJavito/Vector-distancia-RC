@@ -30,73 +30,98 @@ typedef pair<int, int> pii;
 typedef vector<int> vi;
 typedef vector<pii> vpii;
 
-
-/*
-    **Código para obtener el tiempo de runtime***
-
-    la libreria de std::chrono::high_resolution_clock no está 
-    bien implementada en windows, solamente en linux 
-    es por ello que daba respuestas como 0 de runtime 
-    para ello utilizamos otras funciones de la librería
-    windows.h para obtener el tiempo de respuesta 
-    extraido de 
-    https://stackoverflow.com/questions/1739259/how-to-use-queryperformancecounter
-*/
-
+//variables utilizadas para contar el tiempo 
 double PCFreq = 0.0;
 __int64 CounterStart = 0;
-
-void StartCounter()
-{
-    LARGE_INTEGER li;
-    if(!QueryPerformanceFrequency(&li))
-    cout << "QueryPerformanceFrequency failed!\n";
-
-    PCFreq = double(li.QuadPart)/1000.0;
-
-    QueryPerformanceCounter(&li);
-    CounterStart = li.QuadPart;
-}
-double GetCounter()
-{
-    LARGE_INTEGER li;
-    QueryPerformanceCounter(&li);
-    return double(li.QuadPart-CounterStart)/PCFreq;
-}
-
-// Funcion para poner alinear al centro un string, dando como parametro
-// el string y el tamaño que hay para poner el string
-
-string center(const string s, const int w) {
-    stringstream ss, spaces;
-    int padding = w - s.size();                 
-    for(int i=0; i<padding/2; ++i)
-        spaces << " ";
-    ss << spaces.str() << s << spaces.str();  
-    if(padding>0 && padding%2!=0)               
-        ss << " ";
-    return ss.str();
-}
-
-// ----------------- DECLARACION DE VARIABLES Y ALGORITMO --------------
 
 //Declaracion de N como un numero bastante grande, mas que todo para el algoritmo de bellman-ford
 //Lo ponemos como const por que es una constante en todo el programa 
 const int N = 3e5;
 
+// ----------------- DECLARACION DE VARIABLES Y ALGORITMO --------------
 
 // Declaracion de los vectores que almacenaran la distancia y las vias 
-vi dist(N, 3e5);
-vi link(N , -1);
+vi dist;
+vi link;
 
 //Declaracion de la lista de adyacencia 
 vpii adj[N];
 
 //Declaracion de las variables de la cantidad de nodos y cantidad de aristas
-int CantNodos , CantAristas;
+int CantNodos , CantAristas , nodo;
+
+//Declaracion de funciones
+int get_via(int n, int u);
+void bellman_ford(int n);
+void imprimirRespuesta();
+void leerGrafo();
+void StartCounter();
+double GetCounter();
+int calcMemory();
+string center(const string s, const int w);
 
 
-// Funcion para obtener la via por la que pasa la ruta
+int main(int argc, char *argv[]){
+    //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
+    //indicamos los archivos de texto tanto de salido como de entrada. 
+
+    // validacion de argumentos 
+    if(argc < 4){
+        cout << "NO HAY SUFICIENTES ARGUMENTOS" << endl;
+        return 0; 
+    }
+
+    freopen(argv[1], "r" , stdin);
+    freopen(argv[2], "w" , stdout); 
+
+    //input de los nodos y aristas del grafo
+    cin >> CantNodos >> CantAristas;
+
+    //asignamos memoria para el vector que contendra las distancias 
+    // y el vector que contendra las vias donde tendra que pasar el nodo para llegar al otro nodo
+    dist.resize(CantNodos, N);
+    link.resize(CantNodos, -1);
+
+    //leemos el grafo 
+    leerGrafo();
+
+    //asignamos el valor del argumnto que se refiere al nodo 
+    //a la variable del nodo 
+    nodo = stoi(argv[3]);
+
+    //validacion del nodo 
+    if(nodo >= CantNodos || nodo < 0){
+        cout << "NO EXISTE NÚMERO DE NODO " << endl;
+        return 0;
+    }
+
+    //Comenzamos a tomar el tiempo del algoritmo 
+    StartCounter();
+    // Ejecutamos el algoritmo de bellmand-ford
+    bellman_ford(nodo); 
+    //tomamos el tiempo en que termina el algoritmo 
+    double time = GetCounter();
+
+    //tomamos la diferencia como tiempo de runtime 
+    // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
+    imprimirRespuesta();
+
+    cout << "RUNTIME: " << setprecision(15) << time*100 << " ms" << endl; 
+    cout << "MEMORY: " << calcMemory() << " mb" << endl; 
+
+    return 0;
+}
+
+//funcion para calcular la cantidad de memoria utilizada en el programa 
+int calcMemory(){
+    int res = sizeof(dist) + sizeof(link) + sizeof(CantNodos) + sizeof(CantAristas);
+    for(int i = 0; i < CantNodos ; i++){
+        res += sizeof(adj[i]);
+    }
+    return res; 
+}
+
+// Funcion para obtener la via por la que tiene que ir el nodo para llegar al nodo por el camino más corto
 // Ponemos como parametros el n que es el nodo al que estamos haciendo la tabla 
 // el u es el nodo que está en el indice en la lista de adyacencia
 int get_via(int n, int u)
@@ -148,67 +173,79 @@ void bellman_ford(int n) {
             }
 }
 
-int main(int argc, char *argv[]){
-    //Comenzamos a calcular el tiempo de duracion de nuestro algoritmo 
-    //indicamos los archivos de texto tanto de salido como de entrada. 
 
-    // validacion de argumentos 
-    if(argc < 4){
-        cout << "NO HAY SUFICIENTES ARGUMENTOS" << endl;
-        return 0; 
-    }
+//imprimir en pantalla
 
-    freopen(argv[1], "r" , stdin);
-    freopen(argv[2], "w" , stdout); 
-
-    //input de los nodos y aristas del grafo
-    cin >> CantNodos >> CantAristas;
-
-    //input de la lista de adyacencia 
-    for(int i = 0 ; i < CantAristas; i++){
-        int n1, n2, peso; 
-        cin >> n1 >> n2 >> peso;
-        adj[n1].push_back({n2, peso});
-        adj[n2].push_back({n1, peso});
-    }
-
-    //asignamos el valor del argumnto que se refiere al nodo 
-    //a la variable del nodo 
-
-    int nodo = stoi(argv[3]);
-
-    //validacion del nodo 
-    if(nodo >= CantNodos || nodo < 0){
-        cout << "NO EXISTE NÚMERO DE NODO " << endl;
-        return 0;
-    }
-
-    //Comenzamos a tomar el tiempo del algoritmo 
-    StartCounter();
-    // Ejecutamos el algoritmo de bellmand-ford
-    bellman_ford(nodo); 
-    //tomamos el tiempo en que termina el algoritmo 
-    double time = GetCounter();
-
-    //tomamos la diferencia como tiempo de runtime 
-    // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
-    
-
+void imprimirRespuesta(){
+    int espacio = 13; 
     cout << "*** TABLA DE ENRUTAMIENTO DEL NODO " << nodo << " ***" << endl; 
-    cout << "----------------------" << endl;
-    cout << "|" << center("NODO",6)
-         << "|" << center("PESO",6) 
-         << "|" << center("VIA",6) << "|" << endl;
-    cout << "----------------------" << endl;
+    cout << "-------------------------------------------" << endl;
+    cout << "|" << center("NODO",espacio)
+         << "|" << center("DISTANCIA",espacio) 
+         << "|" << center("IR POR NODO",espacio) << "|" << endl;
+    cout << "-------------------------------------------" << endl;
 
     for(int i = 0; i < CantNodos ; i++){
-        cout << "|" << center(to_string(i),6)  
-         << "|" << center(to_string(dist[i]),6)
-         << "|" << center(to_string(link[i]),6)
+        cout << "|" << center(to_string(i),espacio)  
+         << "|" << center(to_string(dist[i]),espacio)
+         << "|" << center(to_string(link[i]),espacio)
          << "|" << endl;
     }
-    cout << "----------------------" << endl;
-    cout << "RUNTIME: " << setprecision(15) << 
-    time*100 << " ms" << endl; 
-    return 0;
+    cout << "-------------------------------------------" << endl;
+}
+
+//leemos la lista de adyacencia
+
+void leerGrafo(){
+    for(int i = 0 ; i < CantAristas; i++){
+            int n1, n2, peso; 
+            cin >> n1 >> n2 >> peso;
+            adj[n1].push_back({n2, peso});
+            adj[n2].push_back({n1, peso});
+        }
+
+}
+/*
+    **Código para obtener el tiempo de runtime***
+
+    la libreria de std::chrono::high_resolution_clock no está 
+    bien implementada en windows, solamente en linux 
+    es por ello que daba respuestas como 0 de runtime 
+    para ello utilizamos otras funciones de la librería
+    windows.h para obtener el tiempo de respuesta 
+    extraido de 
+    https://stackoverflow.com/questions/1739259/how-to-use-queryperformancecounter
+*/
+
+void StartCounter()
+{
+    LARGE_INTEGER li;
+    if(!QueryPerformanceFrequency(&li))
+    cout << "QueryPerformanceFrequency failed!\n";
+
+    PCFreq = double(li.QuadPart)/1000.0;
+
+    QueryPerformanceCounter(&li);
+    CounterStart = li.QuadPart;
+}
+
+double GetCounter()
+{
+    LARGE_INTEGER li;
+    QueryPerformanceCounter(&li);
+    return double(li.QuadPart-CounterStart)/PCFreq;
+}
+
+// Funcion para poner alinear al centro un string, dando como parametro
+// el string y el tamaño que hay para poner el string
+
+string center(const string s, const int w) {
+    stringstream ss, spaces;
+    int padding = w - s.size();                 
+    for(int i=0; i<padding/2; ++i)
+        spaces << " ";
+    ss << spaces.str() << s << spaces.str();  
+    if(padding>0 && padding%2!=0)               
+        ss << " ";
+    return ss.str();
 }

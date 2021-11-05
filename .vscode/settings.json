@@ -19,6 +19,7 @@
   "files.associations": {
     "chrono": "cpp",
     "condition_variable": "cpp",
-    "system_error": "cpp"
+    "system_error": "cpp",
+    "iostream": "cpp"
   }
 }
