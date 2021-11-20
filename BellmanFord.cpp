@@ -102,12 +102,6 @@ int main(int argc, char *argv[]){
     //tomamos el tiempo en que termina el algoritmo 
     double time = GetCounter();
 
-    //Asiganamos el ir por nodo en cada lugar 
-    for(int i = 0; i < CantNodos ; i++){
-        if(link[i] == nodo){
-            link[i] = i;
-        }
-    }
     //tomamos la diferencia como tiempo de runtime 
     // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
     imprimirRespuesta();
@@ -130,19 +124,21 @@ int calcMemory(){
 // Funcion para obtener la via por la que tiene que ir el nodo para llegar al nodo por el camino más corto
 // Ponemos como parametros el n que es el nodo al que estamos haciendo la tabla 
 // el u es el nodo que está en el indice en la lista de adyacencia
-int get_via(int n, int u)
+int get_via(int source, int destination)
 {
-    //si el valor de n está en link[u]
-    //quiere decir que este nodo esta conectado
-    //directamente con el nodo n, es decir son vecinos
-    if(link[u] == n) 
+    //si el indice coincide con el valor 
+    // que tiene entonces retornamos el valor 
+    // lo que quiere decir que ese es el nodo al cual 
+    // debería ir 
+    if(link[destination] == destination) 
     // en ese caso retornamos u porque son vecinos
-        return u;
+        return destination;
     else
     //caso contrario llamamos recursivamente a la funcion
-    //pero esta vez llamamos al nodo que esta directamente enlazado 
-    // con n y a la via de u 
-        return get_via(n, link[u]);
+    // es como llamar al ancestro del nodo anterior que 
+    // lo tenemos mapeado en el vector link 
+    
+        return get_via(link[link[source]] , link[source]);
 }
 
 //La complejidad de este algorimo es O(VE)
@@ -158,7 +154,7 @@ void bellman_ford(int n) {
     //directamente conectados con n 
 
     for(int i = 0; i < adj[n].size() ; i++){
-        link[adj[n][i].first] = n; 
+        link[adj[n][i].first] = adj[n][i].first; 
     }
 
     //Esta es la parte del algoritmo de bellman Ford
@@ -172,7 +168,7 @@ void bellman_ford(int n) {
                 //Actualizamos el valor de la distancia, ya que se encontro una distancia menor
                 if(dist[v.first] > dist[u] + v.second){
                     //Actualizamos la via 
-                    link[v.first] = get_via(n , u);
+                    link[v.first] = get_via(u , v.first);
                     //Actualizamos la distancia
                     dist[v.first] = dist[u] + v.second;
                 }
