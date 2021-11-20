@@ -5,7 +5,7 @@
  *    dara un ejecutable de nombre BellmanFord.exe.
  * 
  * 2. Ejecutar el .exe con 
- *    ./BellmanFord -O3 <ArchivoGrafo.txt> <nombreArchivoOutput> <Nodo> 
+ *    ./BellmanFord <ArchivoGrafo.txt> <nombreArchivoOutput> <Nodo> 
  * 
  * 3. Al ejecutar ese comando nos dara el archivo con la tabla de enrutamiento 
  *    al nodo que le indicamos. 
@@ -102,12 +102,18 @@ int main(int argc, char *argv[]){
     //tomamos el tiempo en que termina el algoritmo 
     double time = GetCounter();
 
+    //Asiganamos el ir por nodo en cada lugar 
+    for(int i = 0; i < CantNodos ; i++){
+        if(link[i] == nodo){
+            link[i] = i;
+        }
+    }
     //tomamos la diferencia como tiempo de runtime 
     // PRESENTACION DE LA TABLA DE ENRUTAMIENTO
     imprimirRespuesta();
 
     cout << "RUNTIME: " << setprecision(15) << time*100 << " ms" << endl; 
-    cout << "MEMORY: " << calcMemory() << " mb" << endl; 
+    cout << "MEMORY: " << calcMemory() << " bytes" << endl; 
 
     return 0;
 }
