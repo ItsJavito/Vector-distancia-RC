@@ -58,6 +58,8 @@ void leerGrafo();
 void StartCounter();
 double GetCounter();
 int calcMemory();
+int ProcessMemory();
+
 string center(const string s, const int w);
 
 
@@ -111,8 +113,8 @@ int main(int argc, char *argv[]){
     imprimirRespuesta();
 
     cout << "RUNTIME: " << setprecision(15) << time*100 << " ms" << endl; 
-    cout << "MEMORY: " << calcMemory() << " bytes" << endl; 
-
+    cout << "MEMORY: " << calcMemory() << " bytes usados" << endl; 
+    cout << "PROCESS MEMORY AVAILABLE: " << ProcessMemory() << " mb" << endl; 
     return 0;
 }
 
@@ -120,9 +122,16 @@ int main(int argc, char *argv[]){
 int calcMemory(){
     int res = sizeof(dist) + sizeof(link) + sizeof(CantNodos) + sizeof(CantAristas);
     for(int i = 0; i < CantNodos ; i++){
-        res += sizeof(adj[i]);
+        res += sizeof(adj[i]) + sizeof(dist[i]) + sizeof(link[i]);
     }
     return res; 
+}
+
+int ProcessMemory(){
+    MEMORYSTATUSEX statex;
+    statex.dwLength = sizeof (statex);
+    GlobalMemoryStatusEx (&statex);
+    return (statex.ullTotalVirtual - statex.ullAvailVirtual) / (1048576);
 }
 
 // Funcion para obtener la via por la que tiene que ir el nodo para llegar al nodo por el camino más corto

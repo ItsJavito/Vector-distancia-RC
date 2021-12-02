@@ -5,11 +5,13 @@
       "name": "C/C++ Runner: Debug Session",
       "type": "cppdbg",
       "request": "launch",
-      "args": [],
+      "args": [
+        ""
+      ],
       "stopAtEntry": false,
-      "cwd": "c:\\Users\\javie\\Desktop\\UNIVERSIDAD\\RC\\Trabajo\\Vector-distancia-RC",
+      "cwd": "c:/UNIVERSIDAD/RC/Trabajo/Vector-distancia-RC",
       "environment": [],
-      "program": "c:\\Users\\javie\\Desktop\\UNIVERSIDAD\\RC\\Trabajo\\Vector-distancia-RC\\build\\Debug\\outDebug",
+      "program": "c:/UNIVERSIDAD/RC/Trabajo/Vector-distancia-RC/build/Debug/outDebug",
       "internalConsoleOptions": "openOnSessionStart",
       "MIMode": "gdb",
       "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
