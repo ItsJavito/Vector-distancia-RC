@@ -20,6 +20,6 @@
 |     15      |      3      |     15      |
 |     16      |      8      |     16      |
 -------------------------------------------
-RUNTIME: 0.84 ms
+RUNTIME: 0.45 ms
 MEMORY: 372 bytes usados
 PROCESS MEMORY AVAILABLE: 25 mb

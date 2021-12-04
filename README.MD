@@ -25,6 +25,9 @@ Despues de compilar procedemos a ajecutar con el siguiente formato
 ```shell
 ./BellmanFord <ArchivoTopologia> <ArchivoRespuesta> <Numero_Nodo>
 ```
+Ejemplo de ejecución del progarama es 
+
+![EjemploPrograma](https://github.com/ItsJavito/Vector-distancia-RC/blob/main/Imagenes/Ejecucion.gif)
 
 ## License
 [MIT](https://choosealicense.com/licenses/mit/)
