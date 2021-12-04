@@ -12,7 +12,7 @@ Primeramente tenemos que clonar el repositorio en el cli de git con
 ```shell
 git clone https://github.com/ItsJavito/Vector-distancia-RC.git 
 ```
-Después de descargar el repositorio y también al instalar el MinGW procedemos a el código con la sentencia
+Después de descargar el repositorio y también al instalar el MinGW procedemos a compilar el código con la sentencia
 
 ```shell
 g++ -O3 ./BellmanFord.cpp -o BellmanFord
