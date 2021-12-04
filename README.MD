@@ -18,7 +18,7 @@ Después de descargar el repositorio y también al instalar el MinGW procedemos 
 g++ -O3 ./BellmanFord.cpp -o BellmanFord
 ```
 Un ejemplo de la ejecución de este comando es
-![ImagenCompilacion](https://github.com/ItsJavito/Vector-distancia-RC/Imagenes/Compilación.gif)
+![ImagenCompilacion](https://github.com/ItsJavito/Vector-distancia-RC/blob/main/Imagenes/Compilación.gif)
 
 Despues de compilar procedemos a ajecutar con el siguiente formato
 
